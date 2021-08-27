@@ -1,6 +1,8 @@
 import React from 'react'
 import  ReactDOM  from 'react-dom'
 
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 class App extends React.Component{
 
     constructor(props){
@@ -10,7 +12,8 @@ class App extends React.Component{
             longitude: null,
             estacao: null,
             data: null,
-            icone: null
+            icone: null,
+            mensagemDeErro: null
         }
     }
 
@@ -50,16 +53,51 @@ class App extends React.Component{
                     data: data.toLocaleTimeString(),
                     icone: icone       
                 })
+            },
+            (erro) => {
+                console.log(erro)
+                this.setState({mensagemDeErro: 'Tente novamente mais tarde'})
             }
+            //jamais faça isso
+            //(erro) => this.state = {mensagemDeErro: JSON.stringify(erro)}
         )
     }
 
 
     render(){
-        this.obterLocalizacao()
+        // this.obterLocalizacao()
         return (
-            <div>
-                {JSON.stringify(this.state)}
+            <div className="container mt-2">
+                <div className="row justify-content-center">
+                    <div className="col-md-8">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="d-flex align-items-center border rounded mb-2" style={{height: '6rem'}}>
+                                    <i className={`fas fa-5x ${this.state.icone}`}></i>
+                                    <p className="w-75 ms-3 text-center fs-1">{this.state.estacao}</p>
+                                </div>
+                                <div>
+                                    <p className="text-center">
+                                        {
+                                            /* expressão condicional, operador ternário */
+                                            this.state.latitude ?
+                                            `Coordenadas: ${this.state.latitude}, ${this.state.longitude}. Data: ${this.state.data}`
+                                            :
+                                            this.state.mensagemDeErro ?
+                                            `${this.state.mensagemDeErro}`
+                                            :
+                                            'Clique no botão para saber a sua estação climática'
+                                            
+                                        }
+                                    </p>
+                                </div>
+                                <button onClick={this.obterLocalizacao} className="btn btn-outline-primary w-100 mt-2">
+                                        Qual a minha estação?
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )   
     }
